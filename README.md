@@ -14,4 +14,4 @@ poetry install
     - Open the notebook and in the top right corner select the kernel 
     - If the kernel doesn't show in the drop down you should be able to click on create kernel and then select the venv
 
-4. Run the cell, it should output `model1`
+4. Run the cell, it should output `model1`, this should confirm that the environment is set up correctly
