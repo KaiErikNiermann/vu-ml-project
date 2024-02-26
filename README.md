@@ -20,17 +20,12 @@ poetry install
 
 1. Register with kaggle and get an API key json [here](https://www.kaggle.com/docs/api) 
 
-2. Install the kaggle utility
-```bash
-pip install kaggle
-```
-There isn't really any reason to install it in the venv and it is kinda buggy and were just using it once so just a global install works fine
-
-3. Move the json file to `~/.kaggle/kaggle.json`
+2. Move the json file to `~/.kaggle/kaggle.json`
 When you run the download command it will look for a json file in some location, if this doesn't work then just follow what the error message says
 
-4. Download the data
+3. Download the data (kaggle utility should be installed via the `poetry install`)
 ```bash
+poetry shell
 kaggle competitions download -c PlantTraits2024 
 ```
 Its a big file so it will take a while, should be around 4GB
