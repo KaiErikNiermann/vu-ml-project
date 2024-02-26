@@ -42,3 +42,9 @@ cd data/
 unzip PlantTraits2024.zip
 ```
 
+## Project structure
+
+The code is all in the `src/` directory
+- `model.py` contains the code relevant for the model 
+- `testing.ipynb` is the main file used for working with the model 
+
