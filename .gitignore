@@ -1,0 +1,13 @@
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.synctex.gz
+
+
+src/*.pyc
+src/__pycache__/
+
+.venv 
+poetry.lock
