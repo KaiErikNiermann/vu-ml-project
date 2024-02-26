@@ -11,3 +11,8 @@ src/__pycache__/
 
 .venv 
 poetry.lock
+
+*.zip
+data/*.zip
+data/*
+data/*.csv

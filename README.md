@@ -15,3 +15,30 @@ poetry install
     - If the kernel doesn't show in the drop down you should be able to click on create kernel and then select the venv
 
 4. Run the cell, it should output `model1`, this should confirm that the environment is set up correctly
+
+## Data setup
+
+1. Register with kaggle and get an API key json [here](https://www.kaggle.com/docs/api) 
+
+2. Install the kaggle utility
+```bash
+pip install kaggle
+```
+There isn't really any reason to install it in the venv and it is kinda buggy and were just using it once so just a global install works fine
+
+3. Move the json file to `~/.kaggle/kaggle.json`
+When you run the download command it will look for a json file in some location, if this doesn't work then just follow what the error message says
+
+4. Download the data
+```bash
+kaggle competitions download -c PlantTraits2024 
+```
+Its a big file so it will take a while, should be around 4GB
+
+5. Move the zip to `data/` and unzip it
+```bash
+mv PlantTraits2024.zip data/ 
+cd data/
+unzip PlantTraits2024.zip
+```
+
