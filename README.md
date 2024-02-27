@@ -16,6 +16,10 @@ poetry install
 
 4. Run the cell, it should output `model1`, this should confirm that the environment is set up correctly
 
+### Latex setup 
+
+Assuming everyone is using VSCode, the best approach is just to use the LaTeX workshop extension there are a bunch of setup guides, you need some added stuff to get it to work, but here is the main one for the [LaTeX workshop setup](https://github.com/James-Yu/LaTeX-Workshop/wiki/Install) 
+
 ## Data setup
 
 1. Register with kaggle and get an API key json [here](https://www.kaggle.com/docs/api) 
