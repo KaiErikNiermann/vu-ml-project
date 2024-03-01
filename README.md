@@ -45,5 +45,6 @@ unzip PlantTraits2024.zip
 
 The code is all in the `src/` directory
 - `model.py` contains the code relevant for the model 
+- `config.py` contains some static configurations for our testing
 - `testing.ipynb` is the main file used for working with the model 
 
