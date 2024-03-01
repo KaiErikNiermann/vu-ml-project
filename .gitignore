@@ -1,3 +1,4 @@
+# latex files
 paper/*.aux
 paper/*.log
 paper/*.out
@@ -5,13 +6,15 @@ paper/*.fdb_latexmk
 paper/*.fls
 paper/*.synctex.gz
 
-
+# python files
 src/*.pyc
 src/__pycache__/
 
+# poetry files
 .venv 
 poetry.lock
 
+# data files
 *.zip
 data/*.zip
 data/*
