@@ -6,17 +6,19 @@ authors = ["KaiErikNiermann <kai.niermann@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.10, <3.12"
 numpy = "^1.26.4"
 pandas = "^2.2.1"
 scikit-learn = "^1.4.1.post1"
 matplotlib = "^3.8.3"
 seaborn = "^0.13.2"
 kaggle = "^1.6.6"
-keras = "^3.0.5"
 opencv-python = "^4.9.0.80"
-tensorflow = "^2.15.0.post1"
 keras-cv = "^0.8.2"
+tensorflow = "2.16.0-rc0"
+keras = "^3.0.5"
+jax = "^0.4.25"
+jaxlib = "^0.4.25"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.2"
