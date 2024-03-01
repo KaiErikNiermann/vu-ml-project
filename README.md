@@ -22,7 +22,7 @@ Assuming everyone is using VSCode, the best approach is just to use the LaTeX wo
 
 ## Data setup
 
-1. Register with kaggle and get an API key json [here](https://www.kaggle.com/docs/api) 
+1. Register with kaggle and get an API key json [here](https://www.kaggle.com/settings) 
 
 2. Move the json file to `~/.kaggle/kaggle.json`
 When you run the download command it will look for a json file in some location, if this doesn't work then just follow what the error message says
