@@ -29,7 +29,7 @@ When you run the download command it will look for a json file in some location,
 
 3. Download the data (kaggle utility should be installed via the `poetry install`)
 ```bash
-poetry shell
+poetry shell 
 kaggle competitions download -c PlantTraits2024 
 ```
 Its a big file so it will take a while, should be around 4GB
