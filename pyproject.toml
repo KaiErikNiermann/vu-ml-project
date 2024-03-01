@@ -15,6 +15,8 @@ seaborn = "^0.13.2"
 kaggle = "^1.6.6"
 keras = "^3.0.5"
 opencv-python = "^4.9.0.80"
+tensorflow = "^2.15.0.post1"
+keras-cv = "^0.8.2"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.2"
