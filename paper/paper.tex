@@ -1,6 +1,46 @@
-\documentclass{article}
+\documentclass[12pt,a4paper,oneside]{article}
+%\documentclass[12pt,a4paper,oneside,twocolumn]{article}
 
+% Bibliography & Language
+\usepackage[english]{babel} % Language-specific stuff, f.i. hyphenation
+\usepackage{csquotes} % Allows for quotes - recommended by babel
+\usepackage[style=ieee, sorting=nyt, urldate=long, date=long, backend=biber]{biblatex}
+\addbibresource{sources.bib}
+
+% General document
+\usepackage[useregional]{datetime2} % Date
+\usepackage{titling} % Allows for multiple titles (info sheet)
+\usepackage{libertinus} % Fonts
+\usepackage[margin=3cm]{geometry} % Custom margins
+\usepackage{parskip} % Removes indentation at start of paragraph, add space between them
+\usepackage[normalem]{ulem} % Underlining
+\useunder{\uline}{\ul}{}
+\usepackage[htt]{hyphenat} % Hyphenation for monospace text
+\usepackage{todonotes} % Add todos
+\usepackage{blindtext} % lorem ipsum, blind text
+
+% Graphics
+\usepackage{graphicx} % Graphics extended
+\usepackage{hyperref} % Refer to things, including URLs
+\usepackage{float} % Allows for H float option ("here")
+\usepackage{caption} % allows for centered figure caption justification
+
+% Report hand-in date
+\DTMsavedate{date}{2024-03-29}
+
+\title{\Huge{Machine Learning}\\\LARGE TODO: Title goes here}
+\author{
+Kai E. Niermann \and
+Dávid Miklo \and 
+Trix Taicet \and
+Red Kaláb \and
+Conner Dassen
+}
+\date{\DTMusedate{date}}
 \begin{document}
-First document. This is a simple example, with no
-extra parameters or packages included.
+\maketitle
+
+\blinddocument
+
+\include{info_sheet.tex}
 \end{document}
