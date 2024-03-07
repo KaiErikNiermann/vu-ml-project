@@ -1,34 +1,15 @@
 \documentclass[12pt,a4paper,oneside]{article}
 %\documentclass[12pt,a4paper,oneside,twocolumn]{article}
-
-% Bibliography & Language
-\usepackage[english]{babel} % Language-specific stuff, f.i. hyphenation
-\usepackage{csquotes} % Allows for quotes - recommended by babel
-\usepackage[style=ieee, sorting=nyt, urldate=long, date=long, backend=biber]{biblatex}
-\addbibresource{sources.bib}
-
-% General document
-\usepackage[useregional]{datetime2} % Date
-\usepackage{titling} % Allows for multiple titles (info sheet)
-\usepackage{libertinus} % Fonts
-\usepackage[margin=3cm]{geometry} % Custom margins
-\usepackage{parskip} % Removes indentation at start of paragraph, add space between them
-\usepackage[normalem]{ulem} % Underlining
-\useunder{\uline}{\ul}{}
-\usepackage[htt]{hyphenat} % Hyphenation for monospace text
-\usepackage{todonotes} % Add todos
-\usepackage{blindtext} % lorem ipsum, blind text
-
-% Graphics
-\usepackage{graphicx} % Graphics extended
-\usepackage{hyperref} % Refer to things, including URLs
-\usepackage{float} % Allows for H float option ("here")
-\usepackage{caption} % allows for centered figure caption justification
+\usepackage{pagestyle}
+\usepackage{codestyle}
 
 % Report hand-in date
 \DTMsavedate{date}{2024-03-29}
 
-\title{\Huge{Machine Learning}\\\LARGE TODO: Title goes here}
+\title{
+    \Huge{Machine Learning} \\ \LARGE 
+    Nature's Quest: Deep Learning Exploration of Global Plant Traits from Images and Geodata
+}
 \author{
 Kai E. Niermann \and
 Dávid Miklo \and 
@@ -40,7 +21,28 @@ Conner Dassen
 \begin{document}
 \maketitle
 
-\blinddocument
+% \lstinputlisting[firstline=10, lastline=13]{code/sample_script.py}
 
-\include{info_sheet.tex}
+\begin{abstract}
+    % Abstract content goes here
+\end{abstract}
+
+\section{Introduction}
+
+\section{Literature review}
+
+\section{Data processing}
+
+\section{Method}
+
+\subsection{Model design}
+
+\subsection{Model evaluation}
+
+\subsection{Results}
+
+\section{Discussion}
+
+\section{Conclusion}
+
 \end{document}
