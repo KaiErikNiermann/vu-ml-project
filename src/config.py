@@ -14,6 +14,11 @@ class config:
     num_classes = 6             # Number of classes in the dataset
     num_folds = 5               # Number of folds to split the dataset
     fold = 0                    # Which fold to set as validation data
+    preset = [
+        "efficientnetv2_b2_imagenet", 
+        "efficientnetv2_s_imagenet",
+        "resnet50_imagenet",
+    ]
 
     class_names = [
         "X4_mean",
