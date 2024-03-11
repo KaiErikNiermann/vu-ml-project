@@ -17,7 +17,6 @@ src/__pycache__/
 
 # poetry files
 .venv 
-poetry.lock
 
 # data files
 *.zip
