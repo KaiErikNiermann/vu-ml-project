@@ -14,22 +14,18 @@ matplotlib = "^3.8.3"
 seaborn = "^0.13.2"
 kaggle = "^1.6.6"
 opencv-python = "^4.9.0.80"
+umap-learn = "^0.5.5"
+pip = "^24.0"
+ipywidgets = "^8.1.2"
+jax = {extras = ["cuda-pip"], version = "^0.4.25"}
+tensorflow = {extras = ["and-cuda"], version = "^2.16.1"}
 keras-cv = "^0.8.2"
 keras = "^3.0.5"
-jax = "^0.4.25"
-jaxlib = {extras = ["cuda12-pip"], version = "^0.4.25"}
-umap-learn = "^0.5.5"
 pydot = "^2.0.0"
-pip = "^24.0"
-tensorrt = {version = "^8.6.1.post1", source = "nvidia"}
-tensorrt-libs = {version = "^8.6.1", source = "nvidia"}
-tensorrt-bindings = {version = "^8.6.1", source = "nvidia"}
-ipywidgets = "^8.1.2"
-tensorflow = "^2.16.1"
+graphviz = "^0.20.1"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.2"
-
 
 [[tool.poetry.source]]
 name = "nvidia"
