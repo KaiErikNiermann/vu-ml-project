@@ -39,12 +39,29 @@ For our method we wanted to compare the accuracy of a CNN trained on images alon
 
 
 % secondary paragraph
-\section{Literature review}
+% \section{Literature review}
 
 \section{Method}
 
-The key 
 \subsection{Data processing}
+
+Integral to any machine learning model is the data used to train, validate and ultimate test the model. The data used consisted of 3 main components: ancillary geodata from various sources, the main task trait means and auxillary task standard deviations, and the training images of the plants.
+
+\smallskip 
+Upon visual inspection one of the first issues we spotted was a considerable chunk (29.53\%) of missing data missing for the auxillary task standard deviations. Through some previous work on the same Kaggle we noticed that the auxillary data was a useful inclusion. We can also validate these reports with previous work applying auxillary tasks in CNNs such as the work of Lukas Libel and Marco Kroener which confirmed that the inclusion of an auxillary task with minor relevance to the main task did indeed boost performance \cite{lukaslibel} or Chen et. al. \cite{pmlr-v80-chen18a} which demonstrated that for very similar or mostly similar auxillary tasks the contribution is generally a positive one. Based on this we decided to use a simple k-nearest neighbor (kNN) imputation strategy. The rest of the data had all values present.
+
+\smallskip
+The geodata was another point of consideration in the data pre-processing phase. Looking at the individual columns we noticed that the instances had features which encoded similar information and thus where likely redundant in the training process. Since we are working with a very high dimensional feature space to get some sort of visual verification of this claim we plotted a correlation heatmap for the 3 biggest groups of the geodata, namely the datasets: soil (soil information), MODIS, and VOD.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{assets/corr_hm.png}
+    \caption{Correlation heatmap of the 3 biggest groups of geodata}
+\end{figure}
+
+Since these datasets individually can be broken down into groups of features generally talking about a similar topic we can see that the correlation within these groups is quite high. Even though previous work \cite{DBLP:journals/corr/abs-2007-00062} has demonstrated the viability of neural network models to learn from high dimensional data, removing redundant features has in numerous instances been shown to improve model performance \cite{chen2022survey}. With this in mind we decided to apply a Principal Component Analysis (PCA) to the geodata to reduce the dimensionality of the data. We specified that the number of principle components should be such that 95\% of the variance is explained.   
+
+\subsection{Data preparation}
 
 \subsection{Model design}
 
