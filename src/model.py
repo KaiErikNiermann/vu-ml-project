@@ -18,8 +18,9 @@ def Model(config, slct_backbone):
     backbone = backbones[slct_backbone](slct_backbone)
     backbone_output = backbone(img_input)
     gavrg1 = layers.GlobalAveragePooling2D()(backbone_output)
-    dense1 = layers.Dense(512, activation="relu")(gavrg1)
-    dropout = layers.Dropout(0.2)(dense1)
+    dense1 = layers.Dense(1024, activation="relu")(gavrg1)
+    dense2 = layers.Dense(512, activation="relu")(dense1)
+    dropout = layers.Dropout(0.2)(dense2)
 
     # Output layers
     head_out = layers.Dense(config.num_classes, activation=None, name="head")(dropout)
@@ -30,10 +31,10 @@ def Model(config, slct_backbone):
     # Compile model
     print("Compiling model")
     model.compile(
-        optimizer=keras.optimizers.Adam(learning_rate=1e-3),
+        optimizer=keras.optimizers.Adam(learning_rate=1e-4),
         loss={"head": R2Loss(), "aux_head": R2Loss()},
-        loss_weights={"head": 1.0, "aux_head": 0.4},
-        metrics={"head": R2Metric()},
+        loss_weights={"head": 1.0, "aux_head": 0.3},
+        metrics={"head": R2Metric(), "head": "accuracy"},
     )
 
     return model
