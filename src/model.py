@@ -2,6 +2,7 @@ import keras_cv
 import tensorflow.keras as keras
 from tensorflow.keras import layers
 from loss import R2Loss, R2Metric
+from keras.metrics import Accuracy
 import config
 
 def Model(config, slct_backbone):
@@ -34,7 +35,7 @@ def Model(config, slct_backbone):
         optimizer=keras.optimizers.Adam(learning_rate=1e-4),
         loss={"head": R2Loss(), "aux_head": R2Loss()},
         loss_weights={"head": 1.0, "aux_head": 0.3},
-        metrics={"head": R2Metric(), "head": "accuracy"},
+        metrics={"head": R2Metric()},
     )
 
     return model
