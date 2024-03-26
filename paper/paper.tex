@@ -48,10 +48,10 @@ For our method we wanted to compare the accuracy of a CNN trained on images alon
 Integral to any machine learning model is the data used to train, validate and ultimate test the model. The data used consisted of 3 main components: ancillary geodata from various sources, the main task trait means and auxillary task standard deviations, and the training images of the plants.
 
 \smallskip 
-Upon visual inspection one of the first issues we spotted was a considerable chunk (29.53\%) of missing data missing for the auxillary task standard deviations. Through some previous work on the same Kaggle we noticed that the auxillary data was a useful inclusion. We can also validate these reports with previous work applying auxillary tasks in CNNs such as the work of Lukas Libel and Marco Kroener which confirmed that the inclusion of an auxillary task with minor relevance to the main task did indeed boost performance \cite{lukaslibel} or Chen et. al. \cite{pmlr-v80-chen18a} which demonstrated that for very similar or mostly similar auxillary tasks the contribution is generally a positive one. Based on this we decided to use a simple k-nearest neighbor (kNN) imputation strategy. The rest of the data had all values present.
+Upon visual inspection one of the first issues we spotted was a considerable chunk (29.53\%) of data missing for the auxillary task standard deviations. Through some previous work on the same Kaggle we noticed that the auxillary data was a useful inclusion. We can also validate these reports with previous work applying auxillary tasks in CNNs such as the work of Lukas Libel and Marco Kroener which confirmed that the inclusion of an auxillary task with minor relevance to the main task did indeed boost performance \cite{lukaslibel} or Chen et. al. \cite{pmlr-v80-chen18a} which demonstrated that for very similar or mostly similar auxillary tasks the contribution is generally a positive one. Based on this we decided to use a simple k-nearest neighbor (kNN) imputation strategy which has generally proved effective \cite{joel2024performance}. The rest of the data had all values present.
 
 \smallskip
-The geodata was another point of consideration in the data pre-processing phase. Looking at the individual columns we noticed that the instances had features which encoded similar information and thus where likely redundant in the training process. Since we are working with a very high dimensional feature space to get some sort of visual verification of this claim we plotted a correlation heatmap for the 3 biggest groups of the geodata, namely the datasets: soil (soil information), MODIS, and VOD.
+The geodata was another point of consideration in the data pre-processing phase. Looking at the individual columns we noticed that the instances had features which encoded similar information and thus where likely redundant in the training process. Since we are working with a very high dimensional feature space to get some sort of visual verification of this claim we plotted a correlation heatmap for the 3 biggest groups of the geodata, namely the datasets: SOIL, MODIS, and VOD.
 
 \begin{figure}[!h]
     \centering
@@ -63,9 +63,35 @@ Since these datasets individually can be broken down into groups of features gen
 
 \subsection{Data preparation}
 
+% talk about the augmentation 
+Our training and test image instance - consisting of science citizen photographs - where taken by a wide variety of people under a wide variety of conditions. This means that the images are of varying quality, resolution, and orientation. We can see this just taking a random sample of 5 images.
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{assets/before_aug_img.png}
+    \caption{Random sample of 5 images before augmentation annotated with their target trait labels}
+\end{figure}
+
+To prevent our model from fitting to noise in the data as a byproduct of how images where taken we decided to apply different keras preprocessing layers to batches concurrently. A key benefit of this would be that the model can generalize better to unseen data by learning potentially more meaningful features. While this approach of applying augmentations in the preprocessing stage is less flexible than having filters integrated in the model it does reduce model complexity though at the cost of potentially losing some ability to learn more complex features. Sampling again we can look at the results of our augmentaions. 
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{assets/after_aug_img.png}
+    \caption{Random sample of 5 images with augmentations: brightness, rotation, contrast, zoom, hue, cutout, flip, blur, saturation}
+\end{figure}
+
+% 5-fold stratified cross-validation + verification and split 
+
 \subsection{Model design}
 
+\subsubsection{CNN trained on images}
+
+\subsubsection{CNN trained on images and geodata}
+
 \subsection{Model evaluation}
+
+% evaluation of individual models 
+
+% comparative evaluation
 
 \section{Results}
 
