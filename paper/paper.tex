@@ -80,24 +80,117 @@ To prevent our model from fitting to noise in the data as a byproduct of how ima
 \end{figure}
 
 % 5-fold stratified cross-validation + verification and split 
+% \cite{Marcot2021} k = 5 good for large sample
+% \cite{kequal10isgood} k ~ 10 generally good choice
+Another method of reducing overfitting we thought relevant to apply here would be k-fold cross validation. For the choice of $k$ we chose 5 as for large datasets this has proven effective \cite{Marcot2021} and is generally around the commonly chosen value of 10 \cite{kequal10isgood}. Given that the data is from a geographically large enough sample we decided to create the folds in a stratified manner under the assumption the distribution of traits would be reasonably representaitive of the true distribution and thus one the model should learn. This is important as it ensures that the model is trained on a representative sample of the data in each fold and in turn has its predictions distributed in a similar manner to the assumed true distribution of the traits. So we reduce the risk of overfitting to the training data while also ensuring the model is trained using a representaitive sample of targets in each fold. To validate that the distributions of the target traits are indeed similar we averaged the distributions of the target traits in each fold and overlayed this on the original distribution of trait means and normalized them to the same scale. 
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/distribution_match_folds.png}
+    \caption{Comparison of the average trait distributions in each fold with the original distribution of trait means ; (blue) normalized distribution of the trait means across the entire dataset ; (yellow) average normalized distribution of the trait means in each fold}
+\end{figure}
 
 \subsection{Model design}
 
 \subsubsection{CNN trained on images}
 
+% give an overview of the model 
+    % activation function 
+    % batch size
+    % optimizer 
+    % epochs
+Our image CNN is a multi-output model which takes in a tensor consisting of red, green, and blue channels with an image size of 224x224 pixels. The model consists of a pretrained backbone; in our instance we compared \textit{efficientnetv2\_b2\_imagenet}, \textit{efficientnetv2\_s\_imagenet}, and \textit{resnet50\_imagenet}. The backbone outputs then feed into a global average pooling layer, followed by 2 dense layers and a dropout layer connected to the two dense output layers for the main and auxillary task. The hidden layers use a ReLU activation function, the outputs use no activation function as the targets are continuous. The model is trained using the Adam optimizer with a learning rate of 1e-4, a batch size of 48 and for 12 epochs. Additionally we used the $R^2$ metric for both loss and evaluation of the model performance as this is a regression problem. Finally we used step-based for the learning rate schedule which was defined as follows
+\[
+    \text{lr} = \text{lr}_\text{max} \times d^{\floor*{\frac{e_d}{r}}}
+\]
+Where $e_d$ is the current epoch, $r$ is the step size (=2), and $d$ is the decay rate.
+
+% talk about the backbones 
+    % ResNet 
+    % EfficientNet b2 
+    % EfficientNet s
+\smallskip
+Residual Network (ResNet) \cite{he2016identity} introduced in 2016 is a deep learning model that is able to learn features from images. Most famously its known for mitigating the vanishing gradient problem through the introduction of identiy skip connections. We are using \text{ResNet50} which was trained on imagenet and consists of 48 convolution layers, in addition to a MaxPool and AveragePool layer. EfficientNetV2 \cite{tan2021efficientnetv2} is a family of CNNs from 2021 that have faster speeds than many previous models primarily by increasing image size during training and incorporating adaptive regularization to compensate for any potential accuracy loss. We are using \textit{efficientnetv2\_b2\_imagenet} and \textit{efficientnetv2\_s\_imagenet} which are pretrained on imagenet, with the ladder being a smaller (fewer parameters) version of the former. Comparing these backbones in a table we can get some overview of how they stack up as seen in \ref{tab:backbone_comparison}
+
+To compare these backbones we trained 3 different models with the same architecture but different backbones. We also specified a contribution of 0.3 to the final loss of the auxillary task (as opposed to 1.0 for the main task) as to limit its impacts on the direction of training. A visual overview of the different models can be seen in \ref{fig:models_overview}. 
+
+\begin{table}[!h]
+    % ref for this table 
+    
+    \centering
+    \begin{tabular}{@{}llll@{}}
+    \toprule
+    & EfficientNetV2 b2 & EfficientNetV2 s & ResNet50 \\ \midrule
+    parameters              & 8.77M             & 20.33M           & 23.56M   \\
+    imagenet top 5 accuracy & 94.9\%            & 96.7\%           & (missing)       \\ \bottomrule
+\end{tabular}
+\caption{Comparison of the different backbones and published top 5 accuracy on imagenet for the specific models}
+\label{tab:backbone_comparison}
+\end{table}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/different_models.png}
+    \caption{Visual overview of the 3 models with different backbones}
+    \label{fig:models_overview}
+\end{figure}
+
+\subsubsection{Image CNN tuning}
+
+% model x had the best loss in the end 
+Looking at the loss metrics for the main \textit{head} (main) task we can observe that the network using the <backbone> backbone proved most accurate. Having an $R^2$ of <score> at its best epoch measured on the training data. Though further tuning could possibly improve our performance. Firstly we tested out different learning rate schedulers, specifically \textit{cosine annealing} \cite{cosineannealing} and \textit{exponential decay} using the model with the best backbone. The results of this can be seen in \ref{fig:lr_schedulers}.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.3\textwidth]{assets/sample_image.jpeg}
+    \caption{Comparison of the different learning rate schedulers}
+    \label{fig:lr_schedulers}
+\end{figure}
+
+Using these results we once again take the model with the best learning rate scheduler, finally we thought it would make sense to see if the trainability of the backbone had any effects on the models prediction capabilities. While fine-tuning does allow our model to adapt the backbone for our specific task it does also risk overfitting to our training data though the large amount of data we have should limit this risk somewhat \cite{Ying_2019}. So in \ref{fig:trainable_backbones} we compared the result of our model and without training enabled for the <backbone> backbone.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.3\textwidth]{assets/sample_image.jpeg}
+    \caption{Comparison of the model error over epochs for a trainable and non-trainable backbone}
+\end{figure}
+
+% we wanted to test out : different lr, backbone training on vs off 
+    % test out cosine annealing 
+    % test out exp 
+    % plot step vs exp vs cosine annealing
+
+    % test out backbone training off for best lr schedule 
+    % test out backbone training on for best lr schedule
+
 \subsubsection{CNN trained on images and geodata}
+
+% give an overview of the model
+    % mention mainly the geodata model 
+    % show a plot of the model
 
 \subsection{Model evaluation}
 
 % evaluation of individual models 
 
+% show intermediate activations and maybe comment on those
+
 % comparative evaluation
 
 \section{Results}
 
+% give a simple summary of the results
+
 \section{Discussion}
 
+% discuss the results
+    % why did we see what we saw 
+    % what does this mean for the main task 
+    % what are some of the limitations of our approach
+
 \section{Conclusion}
+
+% give some future direction for things to go into 
 
 \printbibliography
 
