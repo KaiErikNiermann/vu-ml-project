@@ -99,7 +99,7 @@ Another method of reducing overfitting we thought relevant to apply here would b
     % batch size
     % optimizer 
     % epochs
-Our image CNN is a multi-output model which takes in a tensor consisting of red, green, and blue channels with an image size of 224x224 pixels. The model consists of a pretrained backbone; in our instance we compared \textit{efficientnetv2\_b2\_imagenet}, \textit{efficientnetv2\_s\_imagenet}, and \textit{resnet50\_imagenet}. The backbone outputs then feed into a global average pooling layer, followed by 2 dense layers and a dropout layer connected to the two dense output layers for the main and auxillary task. The hidden layers use a ReLU activation function, the outputs use no activation function as the targets are continuous. The model is trained using the Adam optimizer with a learning rate of 1e-4, a batch size of 48 and for 12 epochs. Additionally we used the $R^2$ metric for both loss and evaluation of the model performance as this is a regression problem. Finally we used step-based for the learning rate schedule which is defined as follows
+Our image CNN is a multi-output model which takes in a tensor consisting of red, green, and blue channels with an image size of 224x224 pixels. The model consists of a pretrained backbone; in our instance we compared \textit{efficientnetv2\_b2\_imagenet}, \textit{efficientnetv2\_s\_imagenet}, and \textit{resnet50\_imagenet}. The backbone outputs then feed into a global average pooling layer, followed by 2 dense layers and a dropout layer connected to the two dense output layers for the main and auxillary task. The hidden layers use a ReLU activation function, the outputs use no activation function as the targets are continuous. The model is trained using the Adam optimizer with a learning rate of 1e-4, a batch size of 48 and for 12 epochs. Additionally we used the $R^2$ metric for both loss and evaluation of the model performance as this is a regression problem. Finally we used step-based for the learning rate schedule which was defined as follows
 \[
     \text{lr} = \text{lr}_\text{max} \times d^{\floor*{\frac{e_d}{r}}}
 \]
@@ -135,19 +135,62 @@ To compare these backbones we trained 3 different models with the same architect
     \label{fig:models_overview}
 \end{figure}
 
+\subsubsection{Image CNN tuning}
+
+% model x had the best loss in the end 
+Looking at the loss metrics for the main \textit{head} (main) task we can observe that the network using the <backbone> backbone proved most accurate. Having an $R^2$ of <score> at its best epoch measured on the training data. Though further tuning could possibly improve our performance. Firstly we tested out different learning rate schedulers, specifically \textit{cosine annealing} \cite{cosineannealing} and \textit{exponential decay} using the model with the best backbone. The results of this can be seen in \ref{fig:lr_schedulers}.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.3\textwidth]{assets/sample_image.jpeg}
+    \caption{Comparison of the different learning rate schedulers}
+    \label{fig:lr_schedulers}
+\end{figure}
+
+Using these results we once again take the model with the best learning rate scheduler, finally we thought it would make sense to see if the trainability of the backbone had any effects on the models prediction capabilities. While fine-tuning does allow our model to adapt the backbone for our specific task it does also risk overfitting to our training data though the large amount of data we have should limit this risk somewhat \cite{Ying_2019}. So in \ref{fig:trainable_backbones} we compared the result of our model and without training enabled for the <backbone> backbone.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.3\textwidth]{assets/sample_image.jpeg}
+    \caption{Comparison of the model error over epochs for a trainable and non-trainable backbone}
+\end{figure}
+
+% we wanted to test out : different lr, backbone training on vs off 
+    % test out cosine annealing 
+    % test out exp 
+    % plot step vs exp vs cosine annealing
+
+    % test out backbone training off for best lr schedule 
+    % test out backbone training on for best lr schedule
+
 \subsubsection{CNN trained on images and geodata}
+
+% give an overview of the model
+    % mention mainly the geodata model 
+    % show a plot of the model
 
 \subsection{Model evaluation}
 
 % evaluation of individual models 
 
+% show intermediate activations and maybe comment on those
+
 % comparative evaluation
 
 \section{Results}
 
+% give a simple summary of the results
+
 \section{Discussion}
 
+% discuss the results
+    % why did we see what we saw 
+    % what does this mean for the main task 
+    % what are some of the limitations of our approach
+
 \section{Conclusion}
+
+% give some future direction for things to go into 
 
 \printbibliography
 

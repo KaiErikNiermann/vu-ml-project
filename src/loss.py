@@ -9,7 +9,7 @@ class R2Loss(keras.losses.Loss):
     """
     R2 loss to train the model
     """
-    def __init__(self, name="r2_loss"):
+    def __init__(self, name="r2_loss", reduction="sum_over_batch_size"):
         super().__init__(name=name)
 
     def call(self, y_true, y_pred):
