@@ -19,7 +19,6 @@ def build_augmenter():
         keras_cv.layers.RandomFlip(mode="horizontal_and_vertical"),
         keras_cv.layers.RandomZoom(height_factor=(0.05, 0.15)),
         keras_cv.layers.RandomRotation(factor=(0.01, 0.05)),
-        keras_cv.layers.RandomGaussianBlur(3, factor=(0.01, 0.05)),
     ]
     
     # Apply augmentations to random samples
