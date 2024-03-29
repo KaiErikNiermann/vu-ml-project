@@ -47,7 +47,7 @@ For our method, we wanted to compare the accuracy of a CNN trained on images alo
 Integral to any machine learning model is the data used to train, validate, and ultimately test the model. The data used consisted of 3 main components: ancillary geodata from various sources, the main task trait means and auxiliary task standard deviations, and the training images of the plants.
 
 \smallskip 
-Upon visual inspection one of the first issues we spotted was a considerable chunk (29.53\%) of data missing for the auxiliary task standard deviations. Through some previous work on the same Kaggle, we noticed that the auxiliary data was a useful inclusion. We can also validate these reports with previous work applying auxiliary tasks in CNNs such as the work of Lukas Libel and Marco Kroener which confirmed that the inclusion of an auxiliary task with minor relevance to the main task did indeed boost performance \cite{lukaslibel} or Chen et. al. \cite{pmlr-v80-chen18a} which demonstrated that for very similar or mostly similar auxiliary tasks the contribution is generally a positive one. Based on this we decided to use a simple k-nearest neighbor (kNN) imputation strategy which has generally proved effective \cite{joel2024performance}. The rest of the data had all values present.
+Upon visual inspection one of the first issues we spotted was a considerable chunk (29.53\%) of data missing for the auxiliary task standard deviations. Through some previous work on the same Kaggle, we noticed that the auxiliary data was a useful inclusion. We can also validate these reports with previous work applying auxiliary tasks in CNNs such as the work of Lukas Libel and Marco Kroener which found that the inclusion of an auxiliary task with minor relevance to the main task did indeed boost performance \cite{lukaslibel} and Chen et. al. \cite{pmlr-v80-chen18a} which demonstrated that for very similar or mostly similar auxiliary tasks the contribution is generally a positive one. Based on this we decided to use a simple k-nearest neighbor (kNN) imputation strategy which has generally proved effective \cite{joel2024performance}. The rest of the data had all values present.
 
 \smallskip
 The geodata was another point of consideration in the data pre-processing phase. Looking at the individual columns we noticed that the instances had features that encoded similar information and thus were likely redundant in the training process. Since we are working with a very high dimensional feature space to get some sort of visual verification of this claim we plotted a correlation heatmap for the 3 biggest groups of the geodata, namely the datasets: SOIL, MODIS, and VOD.
@@ -58,7 +58,7 @@ The geodata was another point of consideration in the data pre-processing phase.
     \caption{Correlation heatmap of the 3 biggest groups of geodata}
 \end{figure}
 
-Since these datasets individually can be broken down into groups of features generally talking about a similar topic we can see that the correlation within these groups is quite high. Even though previous work \cite{DBLP:journals/corr/abs-2007-00062} has demonstrated the viability of neural network models to learn from high dimensional data, removing redundant features has in numerous instances been shown to improve model performance \cite{chen2022survey}. With this in mind, we decided to apply a Principal Component Analysis (PCA) to the geodata to reduce the dimensionality of the data. We specified that the number of principal components should be such that 95\% of the variance is explained.  
+Since these datasets individually can be broken down into groups of features generally talking about a similar topic (e.g. precipitation metrics, temperature metrics, etc) we can see that the correlation within these groups is quite high. Even though previous work \cite{DBLP:journals/corr/abs-2007-00062} has demonstrated the viability of neural network models to learn from high dimensional data, removing redundant features has in numerous instances been shown to improve model performance \cite{chen2022survey}. With this in mind, we decided to apply a Principal Component Analysis (PCA) to the geodata to reduce the dimensionality of the data. We specified that the number of principal components should be such that 95\% of the variance is explained.  
 
 \subsection{Data preparation}
 
@@ -86,7 +86,7 @@ To prevent our model from fitting to noise in the data as a byproduct of how ima
 In addition to augmentation we noted that - though not too common - there was still a presence of certain substantial outliers in our data. Through visual inspection a common reason seems to have been specifically how close an indivdiual was when they took an image. As the training data itself was labelled by a machine learning model in a supervised fashion its evident perspective was not something the intial model had learned. As this scaling issue is a byproduct of the inital model which labelled the data and not any true property of the data we decided to remove these outliers. We did this by constraining the target distributions to the interval $[0.0001, 0.9999]$ and then removing any instances that were outside of this interval.
 
 \smallskip
-Another method of reducing overfitting we thought relevant to apply here would be k-fold cross-validation. For the choice of $k$ we chose 5 as for large datasets this has proven effective \cite{Marcot2021} and is generally around the commonly chosen value of 10 \cite{kequal10isgood}. Given that the data is from a geographically large enough sample we decided to create the folds in a stratified manner under the assumption the distribution of traits would be reasonably representative of the true distribution and thus one the model should learn. This is important as it ensures that the model is trained on a representative sample of the data in each fold and in turn, has its predictions distributed in a similar manner to the assumed true distribution of the traits. So we reduce the risk of overfitting to the training data while also ensuring the model is trained using a representative sample of targets in each fold. To validate that the distributions of the target traits are indeed similar we averaged the distributions of the target traits in each fold overlayed this on the original distribution of trait means and normalized them to the same scale.  
+Another method of reducing overfitting we thought relevant to apply here would be k-fold cross-validation for the data split. We chose $k=5$ as for large datasets this has proven effective \cite{Marcot2021} and is generally around the commonly chosen value of 10 \cite{kequal10isgood}, where the 0th fold was designated as the validation set. Given that the data is from a geographically large enough sample we decided to create the folds in a stratified manner under the assumption the distribution of traits would be reasonably representative of the true distribution and thus one the model should learn. This is important as it ensures that the model is trained on a representative sample of the data in each fold and in turn, has its predictions distributed in a similar manner to the assumed true distribution of the traits. So we reduce the risk of overfitting to the training data while also ensuring the model is trained using a representative sample of targets in each fold. To validate that the distributions of the target traits are indeed similar we averaged the distributions of the target traits in each fold overlayed this on the original distribution of trait means and normalized them to the same scale.  
 
 \begin{figure}[!h]
     \centering
@@ -143,48 +143,97 @@ To compare these backbones we trained 3 different models with the same architect
 \subsubsection{Image CNN tuning}
 
 % model x had the best loss in the end 
-Looking at the results of the inital choice of hyperparameters for the different models the first thing we noticed was the similar behavior of all the $R^2$ values. The coefficient of determination is defined as follows 
+Looking at the results in \ref{fig:different_backbones} of the inital choice of hyperparameters for the different models the first thing we noticed was similar behavior of all the $R^2$ values in terms of their sign. The coefficient of determination is defined as follows 
 
 \[
     R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2} = 1 - \frac{SS_{res}}{SS_{tot}}  
 \]
-Where $SS_{res}$ is the residual sum of squares and $SS_{tot}$ is the total sum of squares. One observation in our results was that for all instances we had a negative $R^2$, implying that $SS_{res} > SS_{tot}$ meaning our model preforms worse than the baseline at $SS_{res} = SS_{tot}$. This is a clear indication that the model is evidently learning nothing from the data, numerious reasons could be the cause of this. 
+Where $SS_{res}$ is the residual sum of squares and $SS_{tot}$ is the total sum of squares. One observation in our results was that for all instances we had a negative $R^2$, implying that $SS_{res} > SS_{tot}$ meaning our model preforms worse than the baseline at $SS_{res} = SS_{tot}$. This is a clear indication that the model is fitting against the data, numerious reasons could be the cause of this. Due to the results of the intial training not being conclusive in regards to which model is better we decided to to simply continue with the model using the \textit{efficientnetv2\_b2\_imagenet} backbone as it has a high top 5 accuracy while also having fewer parameters.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/different_backbones.png}
+    \caption{Validation loss for primary task with different backbones}
+    \label{fig:different_backbones}
+\end{figure}
+
+While both of the EfficientNet backbones exhibit a similar behavior as they come from the same family of models; this being a fast convergence though also an early plateu at a more suboptimal loss. The ResNet50 backbone on the other hand has a slower convergence, but a more consisestent decrease in loss (increase in $R^2$). This could indicate that the ResNet50 backbone has a greater potential to learn from the data albeit in a slower manner. 
 
 \smallskip 
-One of the first things we decided to test was the learning rate schedule. We tested out 3 different schedules: step-based (baseline), exponential, and cosine annealing. Due to the results of the intial training not being conclusive in regards to which model is better we decided to to simply continue with the model using the \textit{efficientnetv2\_b2\_imagenet} backbone as it a high top 5 accuracy while also having fewer parameters, reason being that the source of the problem is likely not the backbone rather but rather to do with the model architecture surrounding this and the hyperparameter choices.
+One of the first things we decided to test was the learning rate schedule. We tested out 3 different schedules: step-based (baseline), exponential, and cosine annealing. The results demonstrated in \ref{fig:lr_schedules} show that the cosine annealing and exponential schedule had a slower convergence than the step-based schedule. This is likely due to the fact that the step-based schedule is more aggressive in its learning rate decay. 
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=1\textwidth]{assets/lr_schedules.png}
+    \caption{Comparison of different learning rate schedules}
+    \label{fig:lr_schedules}
+\end{figure}
 
 % we wanted to test out : different lr, backbone training on vs off 
     % test out cosine annealing 
     % test out exp 
     % plot step vs exp vs cosine annealing
 
+Another point of consideration we had was the training of the backbone. We wanted to test out whether there was any difference in $R^2$ whether we allowed the model to adapt the weights of the backbone or not. The results of this can be seen in \ref{fig:backbone_training} in both of these instances we see the model converging at around the 2nd epoch and hitting a plateu of $\approx -0.03 R^2$. This is likely due to the fact that that the backbone requires little additional training to learn the features from the data and generalizes well to this task.
+
     % test out backbone training off for best lr schedule 
     % test out backbone training on for best lr schedule
 
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{assets/train_vs_notrain.png}
+    \caption{Comparison of of models with backbone training on and off}
+    \label{fig:backbone_training}
+\end{figure}
+
 \subsubsection{CNN trained on images and geodata}
+
+To construct the CNN trained on images and geodata we first created the two branches of the model, one to take in the image data and reduce it to a 1-tensor and similarly one to extract features from the tabular data. The two branches where then concatenated and fed to the main and auixallary task dense output layers. As the only difference here is the additional branch for the geodata we kept the hyperparameters the same to get a fair comparison between both approaches. A visual overview of the model can be seen in \ref{fig:geodata_model}.
+
+\begin{figure}[!h]
+    \centering 
+    \includegraphics[width=0.8\textwidth]{assets/img_geo_model.png}
+    \caption{Model architecture of the CNN trained on images and geodata}
+    \label{fig:geodata_model}
+\end{figure}
 
 % give an overview of the model
     % mention mainly the geodata model 
     % show a plot of the model
 
-\subsection{Model evaluation}
+\subsection{Model comparative evaluation}
 
 % evaluation of individual models 
 
-% show intermediate activations and maybe comment on those
+For the final comparison we first looked at the basic evaluation metrics of either model. The results of this can be seen in \ref{fig:basic_evaluation}. We can see that the model trained on images and geodata has a higher $R^2$ suggesting a relative improvement in the prediction capability over just the image model which has a best recorded $R^2$ of <number>. 
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{assets/fin_img_vs_geo.png}
+    \caption{Basic evaluation metrics of the two models}
+    \label{fig:basic_evaluation}
+\end{figure}
+
+\smallskip
 
 % comparative evaluation
 
 \section{Results}
 
 % give a simple summary of the results
+One potential reason why the combined model performs better is simply that certain patterns are easier to learn from the geodata than from the images. Take the trait \textit{Stem specific density} for example, this is a trait that is likely to be more defined as a function of the environment \cite{plants8030065} rather than any visual cues. The same applies to the trait \textit{Leaf nitrogen content} which has been shown to be associated with abiotic stress (e.g. heat, cold, drought, etc.) \cite{Ye2022} and thus is likely to be more easily learned from the geodata.
+
 
 \section{Discussion}
 
 % discuss the results
-    % why did we see what we saw 
-    % what does this mean for the main task 
-    % what are some of the limitations of our approach
+The prediction of plant traits from images and geodata is a complex task that requires a CNN to learn and extract featues from both images and geodata. The results of our work show that a CNN trained on images and geodata outperforms a CNN trained on images alone. Though neither of the models elaborated here is necessarily a good predictior, one of the main reasons for this is likely the complexity and nuance of the task. Though in addition there are various ways our method could be improved upon. 
+
+Hyperparameter tuning is one of the most important aspects of training a machine learning model. In our work we only tested a few different learning rate schedules and backbones. Random search - which as been demonstrated to be more effective than grid search \cite{JMLR:v13:bergstra12a} - would likely have been a better choice, albeit more computationally expensive. In addition we predominantly looked at hyperparameters, but varying the model architecture could have also been a benifical direction. A larger model could potentially learn more nuanced features in the data.
+
+The training data itself can also be possibly modified to improve the model. Certain plant traits rely on some sense of relative scale to be elicited accurately (e.g. we know that a tree is bigger than flower regardless of image angle), this scale is easily lost due to the variability in how people take photos. One way of mitigating this could be to incorporate scale normalization through Depth Estimation, previous work \cite{Ummenhofer_2017} demonstrated the ability to train CNNs on the DIODE (Dense Indoor/Outdoor DEpth) \cite{vasiljevic2019diode} dataset to estimate depth. The learned depth information of the images could be used then as a moderator to scale the images to a common scale possibly improving the prediction capabilities.
+
+How adaptable pretrained models are to new tasks is also is also something that could be further explored. Kunze et al. \cite{kunze2017transfer} answered this question by looking at the weight difference distribution per layer early and late into training. What they found was that for models trained on a similar task to the target domain only had a minor change in the weight distribution. This reasoning could possibly be applied to more accurately find the optimal backbone. Additionally the use of a pretrained model could be further explored by looking at the effect of the number of layers frozen during training. 
 
 \section{Conclusion}
 

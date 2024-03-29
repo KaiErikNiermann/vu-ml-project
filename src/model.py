@@ -40,7 +40,7 @@ def Model(config, slct_backbone, train_backbone=True, model_name=None, partial=F
     model.compile(
         optimizer=keras.optimizers.Adam(learning_rate=1e-4),
         loss={"head": R2Loss(), "aux_head": R2Loss()},
-        loss_weights={"head": 1.0, "aux_head": 0.15},
+        loss_weights={"head": 1.0, "aux_head": 0.3},
         metrics={"head": R2Metric()},
     )
 
