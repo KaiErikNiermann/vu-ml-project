@@ -7,10 +7,9 @@ class config:
     verbose = 1                 # Verbosity
     seed = 42                   # Random seed
     image_size = [224, 224]     # Input image size
-    epochs = 12                 # Training epochs
+    epochs = 20                 # Training epochs
     batch_size = 48             # Batch size
     lr_mode = "step"            # LR scheduler mode from one of "cos", "step", "exp"
-    drop_remainder = True       # Drop incomplete batches
     num_classes = 6             # Number of classes in the dataset
     num_folds = 5               # Number of folds to split the dataset
     fold = 0                    # Which fold to set as validation data

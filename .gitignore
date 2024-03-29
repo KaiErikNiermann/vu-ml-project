@@ -24,3 +24,6 @@ src/.ipynb_checkpoints/
 data/*.zip
 data/*
 data/*.csv
+
+# misc 
+tmp/
