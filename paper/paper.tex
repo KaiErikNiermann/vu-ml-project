@@ -35,7 +35,7 @@ Global warming and more broadly climate change have become a major concern for t
 Through the work demonstrated by Schiller et al \cite{schiller2021deep} we know that CNNs can be used to predict plant traits from images. The images used to train this network came from \textit{citizen science photographs} which are images taken by citizens of plants from all across the world using AI plant species identification apps (e.g. iNaturalist, Pl@ntNet). Citizen science photographs also come with location metadata, which can be used to extract ancillary geodata such as precipitation, temperature, and soil type. This geodata can optionally be combined with the images to create a CNN which can potentially learn to extract features from images in conjunction with geodata to predict plant traits.
 
 \smallskip
-For our method, we wanted to compare the accuracy of a CNN trained on images alone and using a pre-trained backbone (e.g. ResNet, EfficientNet, etc.) to a CNN trained on images and geodata. We hypothesize that the CNN trained on images and geodata will outperform the CNN trained on images alone. Although the geodata could potentially lead the model to learning features not necessarily helpful for accurate prediction of plant traits due to a multitude of reasons. 
+For our method, we wanted to compare the accuracy of a CNN trained on images alone and using a pre-trained backbone (e.g. ResNet, EfficientNet, etc.) to a CNN trained on images and geodata. We hypothesize that the CNN trained on images and geodata will outperform the CNN trained on images alone. With our results we hope to provide a better understanding of the key factors that are needed to predict plant traits.
 
 % secondary paragraph
 % \section{Literature review}
@@ -44,7 +44,7 @@ For our method, we wanted to compare the accuracy of a CNN trained on images alo
 
 \subsection{Data processing}
 
-Integral to any machine learning model is the data used to train, validate, and ultimately test the model. The data used consisted of 3 main components: ancillary geodata from various sources, the main task trait means and auxiliary task standard deviations, and the training images of the plants.
+Integral to any machine learning model is the data used to train, validate, and ultimately test the model. The data used consisted of 3 main components: ancillary geodata from various sources, the main task trait means and auxiliary task standard deviations, and the training ima ges of the plants.
 
 \smallskip 
 Upon visual inspection one of the first issues we spotted was a considerable chunk (29.53\%) of data missing for the auxiliary task standard deviations. Through some previous work on the same Kaggle, we noticed that the auxiliary data was a useful inclusion. We can also validate these reports with previous work applying auxiliary tasks in CNNs such as the work of Lukas Libel and Marco Kroener which found that the inclusion of an auxiliary task with minor relevance to the main task did indeed boost performance \cite{lukaslibel} and Chen et. al. \cite{pmlr-v80-chen18a} which demonstrated that for very similar or mostly similar auxiliary tasks the contribution is generally a positive one. Based on this we decided to use a simple k-nearest neighbor (kNN) imputation strategy which has generally proved effective \cite{joel2024performance}. The rest of the data had all values present.
@@ -160,11 +160,11 @@ Where $SS_{res}$ is the residual sum of squares and $SS_{tot}$ is the total sum 
 While both of the EfficientNet backbones exhibit a similar behavior as they come from the same family of models; this being a fast convergence though also an early plateu at a more suboptimal loss. The ResNet50 backbone on the other hand has a slower convergence, but a more consisestent decrease in loss (increase in $R^2$). This could indicate that the ResNet50 backbone has a greater potential to learn from the data albeit in a slower manner. 
 
 \smallskip 
-One of the first things we decided to test was the learning rate schedule. We tested out 3 different schedules: step-based (baseline), exponential, and cosine annealing. The results demonstrated in \ref{fig:lr_schedules} show that the cosine annealing and exponential schedule had a slower convergence than the step-based schedule. This is likely due to the fact that the step-based schedule is more aggressive in its learning rate decay. 
+One of the first things we decided to test was the learning rate schedule. We tested out 3 different schedules: step-based (baseline), exponential, and cosine annealing. The results demonstrated in \ref{fig:lr_schedules} show that the cosine annealing and exponential schedule had a slower convergence than the step-based schedule and a more erratic behavior.  
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=1\textwidth]{assets/lr_schedules.png}
+    \includegraphics[width=0.4\textwidth]{assets/lr_schedule_diffs.png}
     \caption{Comparison of different learning rate schedules}
     \label{fig:lr_schedules}
 \end{figure}
@@ -182,7 +182,7 @@ Another point of consideration we had was the training of the backbone. We wante
 \begin{figure}[!h]
     \centering
     \includegraphics[width=0.7\textwidth]{assets/train_vs_notrain.png}
-    \caption{Comparison of of models with backbone training on and off}
+    \caption{Comparison of models with backbone training on (right) and off (left)}
     \label{fig:backbone_training}
 \end{figure}
 
@@ -193,7 +193,7 @@ To construct the CNN trained on images and geodata we first created the two bran
 \begin{figure}[!h]
     \centering 
     \includegraphics[width=0.8\textwidth]{assets/img_geo_model.png}
-    \caption{Model architecture of the CNN trained on images and geodata}
+    \caption{(right) Model architecture of the CNN trained on images and geodata; (left) Model architecture of the CNN trained on images alone}
     \label{fig:geodata_model}
 \end{figure}
 
@@ -227,17 +227,16 @@ One potential reason why the combined model performs better is simply that certa
 \section{Discussion}
 
 % discuss the results
-The prediction of plant traits from images and geodata is a complex task that requires a CNN to learn and extract featues from both images and geodata. The results of our work show that a CNN trained on images and geodata outperforms a CNN trained on images alone. Though neither of the models elaborated here is necessarily a good predictior, one of the main reasons for this is likely the complexity and nuance of the task. Though in addition there are various ways our method could be improved upon. 
+The prediction of plant traits from images and geodata is a complex task that requires a CNN to learn and extract featues from both images and geodata. The results of our work show that a CNN trained on just image outpreforms one trained on images and geodata. Though neither of the models elaborated here is necessarily a good predictior, one of the main reasons for this is likely the complexity and nuance of the task. We now propose various directions for future work to improve the prediction capabilities of the models.
 
 Hyperparameter tuning is one of the most important aspects of training a machine learning model. In our work we only tested a few different learning rate schedules and backbones. Random search - which as been demonstrated to be more effective than grid search \cite{JMLR:v13:bergstra12a} - would likely have been a better choice, albeit more computationally expensive. In addition we predominantly looked at hyperparameters, but varying the model architecture could have also been a benifical direction. A larger model could potentially learn more nuanced features in the data.
 
 The training data itself can also be possibly modified to improve the model. Certain plant traits rely on some sense of relative scale to be elicited accurately (e.g. we know that a tree is bigger than flower regardless of image angle), this scale is easily lost due to the variability in how people take photos. One way of mitigating this could be to incorporate scale normalization through Depth Estimation, previous work \cite{Ummenhofer_2017} demonstrated the ability to train CNNs on the DIODE (Dense Indoor/Outdoor DEpth) \cite{vasiljevic2019diode} dataset to estimate depth. The learned depth information of the images could be used then as a moderator to scale the images to a common scale possibly improving the prediction capabilities.
 
-How adaptable pretrained models are to new tasks is also is also something that could be further explored. Kunze et al. \cite{kunze2017transfer} answered this question by looking at the weight difference distribution per layer early and late into training. What they found was that for models trained on a similar task to the target domain only had a minor change in the weight distribution. This reasoning could possibly be applied to more accurately find the optimal backbone. Additionally the use of a pretrained model could be further explored by looking at the effect of the number of layers frozen during training. 
+How adaptable pretrained models are to new tasks is also is also something that could be further explored. Kunze et al. \cite{kunze2017transfer} answered this question by looking at the weight difference distribution per layer early and late into training. What they found was that models trained on a similar task to the target domain only had a minor change in the weight distribution. This reasoning could possibly be applied to more accurately find the optimal backbone. Additionally the use of a pretrained model could be further explored by looking at the effect of the number of layers frozen during training. 
 
 \section{Conclusion}
-
-% give some future direction for things to go into 
+To conclude we noticed that first and foremost the task to predict pant traits is a hard one. It requires a careful consideration during every step of the process from understanding the data to how a neural network architecture will learn from it. From our results we observed that a model trained on images and ancillary geodata converges faster but does not necessarily have a higher $R^2$ than a model trained on images alone. In the final tests run these results were also observed with our image model having a higher $R^2$ than the combined model. Though both models still have a negative $R^2$ suggesting some core limitations in the models. Future work could look at the effect of different hyperparameters, model architectures, and data modifications to improve the prediction capabilities of the models.   
 
 \printbibliography
 
