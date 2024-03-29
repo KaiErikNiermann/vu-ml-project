@@ -120,8 +120,6 @@ To compare these backbones we trained 3 different models with the same architect
 
 
 \begin{table}[!h]
-    % ref for this table 
-    
     \centering
     \begin{tabular}{@{}llll@{}}
     \toprule
@@ -143,7 +141,7 @@ To compare these backbones we trained 3 different models with the same architect
 \subsubsection{Image CNN tuning}
 
 % model x had the best loss in the end 
-Looking at the results in \ref{fig:different_backbones} of the inital choice of hyperparameters for the different models the first thing we noticed was similar behavior of all the $R^2$ values in terms of their sign. The coefficient of determination is defined as follows 
+Looking at the results in \ref{fig:different_backbones} of the initial choice of hyperparameters for the different models the first thing we noticed was similar behavior of all the $R^2$ values in terms of their sign. The coefficient of determination is defined as follows 
 
 \[
     R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2} = 1 - \frac{SS_{res}}{SS_{tot}}  
@@ -153,18 +151,18 @@ Where $SS_{res}$ is the residual sum of squares and $SS_{tot}$ is the total sum 
 \begin{figure}[!h]
     \centering
     \includegraphics[width=1\textwidth]{assets/different_backbones.png}
-    \caption{Validation loss for primary task with different backbones}
+    \caption{Validation $R^2$ for primary task with different backbones}
     \label{fig:different_backbones}
 \end{figure}
 
-While both of the EfficientNet backbones exhibit a similar behavior as they come from the same family of models; this being a fast convergence though also an early plateu at a more suboptimal loss. The ResNet50 backbone on the other hand has a slower convergence, but a more consisestent decrease in loss (increase in $R^2$). This could indicate that the ResNet50 backbone has a greater potential to learn from the data albeit in a slower manner. 
+While both of the EfficientNet backbones exhibit similar behavior as they come from the same family of models; this being a fast convergence though also an early plateau at a more suboptimal loss. The ResNet50 backbone on the other hand has a slower convergence, but a more consistent decrease in loss (increase in $R^2$). This could indicate that the ResNet50 backbone has a greater potential to learn from the data albeit in a slower manner. 
 
 \smallskip 
 One of the first things we decided to test was the learning rate schedule. We tested out 3 different schedules: step-based (baseline), exponential, and cosine annealing. The results demonstrated in \ref{fig:lr_schedules} show that the cosine annealing and exponential schedule had a slower convergence than the step-based schedule and a more erratic behavior.  
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.4\textwidth]{assets/lr_schedule_diffs.png}
+    \includegraphics[width=1\textwidth]{assets/lr_schedule_diffs.png}
     \caption{Comparison of different learning rate schedules}
     \label{fig:lr_schedules}
 \end{figure}
@@ -174,7 +172,7 @@ One of the first things we decided to test was the learning rate schedule. We te
     % test out exp 
     % plot step vs exp vs cosine annealing
 
-Another point of consideration we had was the training of the backbone. We wanted to test out whether there was any difference in $R^2$ whether we allowed the model to adapt the weights of the backbone or not. The results of this can be seen in \ref{fig:backbone_training} in both of these instances we see the model converging at around the 2nd epoch and hitting a plateu of $\approx -0.03 R^2$. This is likely due to the fact that that the backbone requires little additional training to learn the features from the data and generalizes well to this task.
+Another point of consideration we had was the training of the backbone. We wanted to test out whether there was any difference in $R^2$ whether we allowed the model to adapt the weights of the backbone or not. The results of this can be seen in \ref{fig:backbone_training} in both of these instances we see the model converging at around the 2nd epoch and hitting a plateau of $\approx -0.03 R^2$. This is likely due to the fact that the backbone requires little additional training to learn the features from the data and generalizes well to this task.
 
     % test out backbone training off for best lr schedule 
     % test out backbone training on for best lr schedule
@@ -188,7 +186,7 @@ Another point of consideration we had was the training of the backbone. We wante
 
 \subsubsection{CNN trained on images and geodata}
 
-To construct the CNN trained on images and geodata we first created the two branches of the model, one to take in the image data and reduce it to a 1-tensor and similarly one to extract features from the tabular data. The two branches where then concatenated and fed to the main and auixallary task dense output layers. As the only difference here is the additional branch for the geodata we kept the hyperparameters the same to get a fair comparison between both approaches. A visual overview of the model can be seen in \ref{fig:geodata_model}.
+To construct the CNN trained on images and geodata we first created the two branches of the model, one to take in the image data and reduce it to a 1-tensor and similarly, one to extract features from the tabular data. The two branches were then concatenated and fed to the main and auxiliary task dense output layers. As the only difference here is the additional branch for the geodata we kept the hyperparameters the same to get a fair comparison between both approaches. A visual overview of the model can be seen in \ref{fig:geodata_model}.
 
 \begin{figure}[!h]
     \centering 
@@ -205,11 +203,11 @@ To construct the CNN trained on images and geodata we first created the two bran
 
 % evaluation of individual models 
 
-For the final comparison we first looked at the basic evaluation metrics of either model. The results of this can be seen in \ref{fig:basic_evaluation}. We can see that the model trained on images and geodata has a higher $R^2$ suggesting a relative improvement in the prediction capability over just the image model which has a best recorded $R^2$ of <number>. 
+For the final comparison we first looked at the basic evaluation metrics of either model. The results of this can be seen in \ref{fig:basic_evaluation}. We can see that the model trained on images and geodata has a lower $R^2$ than the model just trained on images, though not by any significant margin. 
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.7\textwidth]{assets/fin_img_vs_geo.png}
+    \includegraphics[width=0.8\textwidth]{assets/fin_img_vs_geo.png}
     \caption{Basic evaluation metrics of the two models}
     \label{fig:basic_evaluation}
 \end{figure}
@@ -220,23 +218,31 @@ For the final comparison we first looked at the basic evaluation metrics of eith
 
 \section{Results}
 
-% give a simple summary of the results
-One potential reason why the combined model performs better is simply that certain patterns are easier to learn from the geodata than from the images. Take the trait \textit{Stem specific density} for example, this is a trait that is likely to be more defined as a function of the environment \cite{plants8030065} rather than any visual cues. The same applies to the trait \textit{Leaf nitrogen content} which has been shown to be associated with abiotic stress (e.g. heat, cold, drought, etc.) \cite{Ye2022} and thus is likely to be more easily learned from the geodata.
+Even though the $R^2$ did not vary by a significant margin between the combined and image model, the $R^2$ on the test set did. While both models still had a negative $R^2$ the test set the image model had a higher $R^2$ than the combined model. One potential explanation for this is that the model is overfitting on some property derived from the training data. The source of this issue would then reasonably lie with the inclusion of the geodata. While in theory the geodata does provide more context to the model and thus should give it a greater potential to learn from the data, it could also be the case that the model is learning from the geodata in a way that is not beneficial to the prediction of the plant traits.   
 
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{@{}llll@{}}
+    \toprule
+    & Image model & Combined model \\ \midrule
+    test set $R^2$              & -6.18163             & -381.62190   \\ \bottomrule
+\end{tabular}
+\caption{Comparison of the $R^2$ on the test set for the two models}
+\end{table}
 
 \section{Discussion}
 
 % discuss the results
-The prediction of plant traits from images and geodata is a complex task that requires a CNN to learn and extract featues from both images and geodata. The results of our work show that a CNN trained on just image outpreforms one trained on images and geodata. Though neither of the models elaborated here is necessarily a good predictior, one of the main reasons for this is likely the complexity and nuance of the task. We now propose various directions for future work to improve the prediction capabilities of the models.
+The prediction of plant traits from images and geodata is a complex task that requires a CNN to learn and extract features from both images and geodata. The results of our work show that a CNN trained on just an image outperforms one trained on images and geodata. Though neither of the models elaborated here is necessarily a good predictor, one of the main reasons for this is likely the complexity and nuance of the task. We now propose various directions for future work to improve the prediction capabilities of the models.
 
-Hyperparameter tuning is one of the most important aspects of training a machine learning model. In our work we only tested a few different learning rate schedules and backbones. Random search - which as been demonstrated to be more effective than grid search \cite{JMLR:v13:bergstra12a} - would likely have been a better choice, albeit more computationally expensive. In addition we predominantly looked at hyperparameters, but varying the model architecture could have also been a benifical direction. A larger model could potentially learn more nuanced features in the data.
+Hyperparameter tuning is one of the most important aspects of training a machine learning model. In our work, we only tested a few different learning rate schedules and backbones using a greedy optimization approach. Random search - which has been demonstrated to be more effective than grid search \cite{JMLR:v13:bergstra12a} - would likely have been a better choice, albeit more computationally expensive. In addition, we predominantly looked at hyperparameters, but varying the model architecture could have also been a beneficial direction. A larger model could potentially learn more nuanced features in the data. 
 
-The training data itself can also be possibly modified to improve the model. Certain plant traits rely on some sense of relative scale to be elicited accurately (e.g. we know that a tree is bigger than flower regardless of image angle), this scale is easily lost due to the variability in how people take photos. One way of mitigating this could be to incorporate scale normalization through Depth Estimation, previous work \cite{Ummenhofer_2017} demonstrated the ability to train CNNs on the DIODE (Dense Indoor/Outdoor DEpth) \cite{vasiljevic2019diode} dataset to estimate depth. The learned depth information of the images could be used then as a moderator to scale the images to a common scale possibly improving the prediction capabilities.
+The training data itself can also be possibly modified to improve the model. Certain plant traits rely on some sense of relative scale to be elicited accurately (e.g. we know that a tree is bigger than a flower regardless of image angle), but this scale is easily lost due to the variability in how people take photos. One way of mitigating this could be to incorporate scale normalization through Depth Estimation, previous work \cite{Ummenhofer_2017} demonstrated the ability to train CNNs on the DIODE (Dense Indoor/Outdoor DEpth) \cite{vasiljevic2019diode} dataset to estimate depth. The learned depth information of the images could be used then as a moderator to scale the images to a common scale possibly improving the prediction capabilities.
 
-How adaptable pretrained models are to new tasks is also is also something that could be further explored. Kunze et al. \cite{kunze2017transfer} answered this question by looking at the weight difference distribution per layer early and late into training. What they found was that models trained on a similar task to the target domain only had a minor change in the weight distribution. This reasoning could possibly be applied to more accurately find the optimal backbone. Additionally the use of a pretrained model could be further explored by looking at the effect of the number of layers frozen during training. 
+How adaptable pre-trained models are to new tasks is also is also something that could be further explored. Kunze et al. \cite{kunze2017transfer} answered this question by looking at the weight difference distribution per layer early and late into training. What they found was that models trained on a similar task to the target domain only had a minor change in the weight distribution. This reasoning could possibly be applied to more accurately find the optimal backbone. Additionally, the use of a pre-trained model could be further explored by looking at the effect of the number of layers frozen during training. 
 
 \section{Conclusion}
-To conclude we noticed that first and foremost the task to predict pant traits is a hard one. It requires a careful consideration during every step of the process from understanding the data to how a neural network architecture will learn from it. From our results we observed that a model trained on images and ancillary geodata converges faster but does not necessarily have a higher $R^2$ than a model trained on images alone. In the final tests run these results were also observed with our image model having a higher $R^2$ than the combined model. Though both models still have a negative $R^2$ suggesting some core limitations in the models. Future work could look at the effect of different hyperparameters, model architectures, and data modifications to improve the prediction capabilities of the models.   
+To conclude we noticed that first and foremost the task of predicting plant traits is a hard one. It requires careful consideration during every step of the process from understanding the data to how a neural network architecture will learn from it. From our results, we observed that a model trained on images and ancillary geodata converges faster but does not necessarily have a higher $R^2$ than a model trained on images alone. In the final tests run these results were also observed with our image model having a higher $R^2$ than the combined model. However, both models still have a negative $R^2$ suggesting some core limitations in the models. Future work could look at the effect of different hyperparameters, model architectures, and data modifications to improve the prediction capabilities of the models.   
 
 \printbibliography
 
