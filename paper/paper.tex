@@ -163,7 +163,7 @@ One of the first things we decided to test was the learning rate schedule. We te
 \begin{figure}[!h]
     \centering
     \includegraphics[width=1\textwidth]{assets/lr_schedule_diffs.png}
-    \caption{Comparison of different learning rate schedules}
+    \caption{Comparison of different learning rate schedules ; (left) step-based ; (center) cosine annealing ; (right) exponential}
     \label{fig:lr_schedules}
 \end{figure}
 
@@ -172,7 +172,7 @@ One of the first things we decided to test was the learning rate schedule. We te
     % test out exp 
     % plot step vs exp vs cosine annealing
 
-Another point of consideration we had was the training of the backbone. We wanted to test out whether there was any difference in $R^2$ whether we allowed the model to adapt the weights of the backbone or not. The results of this can be seen in \ref{fig:backbone_training} in both of these instances we see the model converging at around the 2nd epoch and hitting a plateau of $\approx -0.03 R^2$. This is likely due to the fact that the backbone requires little additional training to learn the features from the data and generalizes well to this task.
+Another point of consideration we had was the training of the backbone. We wanted to test out whether there was any difference in $R^2$ when we allowed the model to adapt the weights of the backbone or not. The results of this can be seen in \ref{fig:backbone_training} in both of these instances we see the model converging at around the 2nd epoch and hitting a plateau of $\approx -0.03 R^2$. This is likely due to the fact that the backbone requires little additional training to learn the features from the data and generalizes well to this task.
 
     % test out backbone training off for best lr schedule 
     % test out backbone training on for best lr schedule
